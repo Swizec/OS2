@@ -22,11 +22,33 @@ import cPickle as pickle
 from get_list import files
 
 def checksum(path):
+    print ""
+    print "Checking:"
+    sys.stdout.write(path)
+    
     hash = hashlib.sha512()
-
+    size = os.path.getsize(path)
+    n = size/16384 + 1
+    interval = n/40
+    x = 0
+    i = 0.0
+    
+    if n>100:
+        print ""
+        sys.stdout.write(str(i)+'%')
     with open(path, 'rb') as f:
         for chunk in iter(lambda: f.read(128*hash.block_size), ''):
-            hash.update(chunk)
+            x = x+1
+            if n>100:
+                if x>=interval:
+                    sys.stdout.write(".")
+                    x = 0
+                    i = i + 2.5
+                    if i%25 ==0:
+                        sys.stdout.write(str(i)+'%')
+                hash.update(chunk)
+    print ""
+    print " DONE!"
     return hash.hexdigest()
 
 def load():
@@ -37,7 +59,7 @@ def load():
 
 def store(changed, old):
     data = old
-    
+    print ""
     for f in changed:
         data[f] = {'time': os.path.getmtime(f),
                    'checksum': checksum(f)}
@@ -59,7 +81,7 @@ def changed(dir):
 
     def check(path):
         try:
-            print path
+            
             return checksum(path) != old_meta[path]['checksum']
         except KeyError:
             return True
