@@ -33,20 +33,20 @@ def checksum(path):
     x = 0
     i = 0.0
     
-    if n>100:
+    if n>1280:
         print ""
         sys.stdout.write(str(i)+'%')
     with open(path, 'rb') as f:
         for chunk in iter(lambda: f.read(128*hash.block_size), ''):
             x = x+1
-            if n>100:
+            if n>1280:
                 if x>=interval:
                     sys.stdout.write(".")
                     x = 0
                     i = i + 2.5
                     if i%25 ==0:
                         sys.stdout.write(str(i)+'%')
-                hash.update(chunk)
+            hash.update(chunk)
     print ""
     print " DONE!"
     return hash.hexdigest()
