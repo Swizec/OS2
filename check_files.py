@@ -25,14 +25,14 @@ def checksum(path):
     print ""
     print "Checking:"
     sys.stdout.write(path)
-    
+
     hash = hashlib.sha512()
     size = os.path.getsize(path)
     n = size/16384 + 1
     interval = n/40
     x = 0
     i = 0.0
-    
+
     if n>1280:
         print ""
         sys.stdout.write(str(i)+'%')
@@ -53,7 +53,7 @@ def checksum(path):
 
 def load():
     try:
-        return pickle.load(open('meta.p', 'rb'))
+        return pickle.load(open('.meta', 'rb'))
     except IOError:
         return {}
 
@@ -63,8 +63,8 @@ def store(changed, old):
     for f in changed:
         data[f] = {'time': os.path.getmtime(f),
                    'checksum': checksum(f)}
-        
-    pickle.dump(data, open('meta.p', 'wb'))
+
+    pickle.dump(data, open('.meta', 'wb'))
 
 def changed(dir):
     old_meta = load()
@@ -81,7 +81,7 @@ def changed(dir):
 
     def check(path):
         try:
-            
+
             return checksum(path) != old_meta[path]['checksum']
         except KeyError:
             return True
