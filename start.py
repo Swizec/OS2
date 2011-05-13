@@ -1,9 +1,32 @@
 
 # this file takes care of starting a new git-dropbox
 
-import os, sys, getpass
+import os, sys, getpass, ConfigParser
 
 def start(path):
+    write_config(path,
+                 collect_data(path))
+    init_the_git(path)
+
+def init_the_git(path):
+    pass
+
+def write_config(path, info):
+    (local, remote) = info
+
+    config = ConfigParser.RawConfigParser()
+
+    config.add_section('Local')
+    [config.set('Local', k, local[k]) for k in local.keys()]
+
+    config.add_section('Remote')
+    [config.set('Remote', k, local[k]) for k in remote.keys()]
+
+    with open(os.path.join(path, '.git-dropbox'), 'wb') as conf:
+        config.write(conf)
+
+
+def collect_data(path):
     print "Going to ask you some questions to set everything up for your git-dropboxing pleasure"
 
     local = {}
@@ -19,13 +42,11 @@ def start(path):
     remote['IP'] = get_input("Remote IP", local['IP'])
     remote['path'] = get_input("Remote path", local['path'])
 
-    settings = {'local': local,
-                'remote': [remote]}
-
     print "\nThanks!\nThe two git repositories will be"
     print "local:", "%s@%s:%s" % (local['user'], local['IP'], local['path'])
     print "remote:", "%s@%s:%s" % (remote['user'], remote['IP'], remote['path'])
 
+    return (local, remote)
 
 def get_input(prompt, default=None):
     if default:
@@ -40,7 +61,6 @@ def lock(path):
         print "Git-dropbox is already configured for %s!\nEverything is awesome!" % path
         return False
 
-    open(os.path.join(path, '.git-dropbox'), 'w').close()
     return True
 
 
