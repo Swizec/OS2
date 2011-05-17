@@ -14,7 +14,8 @@ def init_the_git(config):
     path = config.get('Local', 'path')
 
     repo = Repo.init(path)
-    blob = Blob.from_path(os.path.join(path, '.git-dropbox.cnf'))
+    #blob = Blob.from_path(os.path.join(path, '.git-dropbox.cnf'))
+    blob = Blob.from_string(open(os.path.join(path, '.git-dropbox.cnf')).read())
 
     tree = Tree()
     tree.add(".git-dropbox.cnf", 0100644, blob.id)
