@@ -2,14 +2,39 @@
 # this file takes care of starting a new git-dropbox
 
 import os, sys, getpass, ConfigParser
+from dulwich.repo import Repo
+from dulwich.objects import Blob, Tree, Commit, parse_timezone, ShaFile
+from time import time
 
 def start(path):
-    write_config(path,
-                 collect_data(path))
-    init_the_git(path)
+    init_the_git(write_config(path,
+                              collect_data(path)))
 
-def init_the_git(path):
-    pass
+def init_the_git(config):
+    path = config.get('Local', 'path')
+
+    repo = Repo.init(path)
+    blob = Blob.from_path(os.path.join(path, '.git-dropbox.cnf'))
+
+    tree = Tree()
+    tree.add(".git-dropbox.cnf", 0100644, blob.id)
+
+    commit = Commit()
+    commit.tree = tree.id
+    commit.author = config.get('Local', 'user')
+    commit.committer = 'Git-dropbox'
+    commit.commit_time = int(time())
+    commit.author_time = os.path.getctime(os.path.join(path, '.git-dropbox.cnf'))
+    commit.commit_timezone = commit.author_timezone = parse_timezone('-0200')[0]
+    commit.encoding = 'UTF-8'
+    commit.message = 'Initial commit'
+
+    object_store = repo.object_store
+    object_store.add_object(blob)
+    object_store.add_object(tree)
+    object_store.add_object(commit)
+
+    repo.refs['refs/heads/master'] = commit.id
 
 def write_config(path, info):
     (local, remote) = info
@@ -22,8 +47,10 @@ def write_config(path, info):
     config.add_section('Remote')
     [config.set('Remote', k, local[k]) for k in remote.keys()]
 
-    with open(os.path.join(path, '.git-dropbox'), 'wb') as conf:
+    with open(os.path.join(path, '.git-dropbox.cnf'), 'wb') as conf:
         config.write(conf)
+
+    return config
 
 
 def collect_data(path):
@@ -46,6 +73,8 @@ def collect_data(path):
     print "local:", "%s@%s:%s" % (local['user'], local['IP'], local['path'])
     print "remote:", "%s@%s:%s" % (remote['user'], remote['IP'], remote['path'])
 
+    print "Now just go to the other computer and run start.py there"
+
     return (local, remote)
 
 def get_input(prompt, default=None):
@@ -57,7 +86,7 @@ def get_input(prompt, default=None):
 
 
 def lock(path):
-    if os.path.exists(os.path.join(path, '.git-dropbox')):
+    if os.path.exists(os.path.join(path, '.git-dropbox.cnf')):
         print "Git-dropbox is already configured for %s!\nEverything is awesome!" % path
         return False
 
@@ -79,6 +108,6 @@ if __name__ == '__main__':
 
     try:
         if sys.argv[2] == '-ignore':
-            os.remove(os.path.join(sys.argv[1], '.git-dropbox'))
+            os.remove(os.path.join(sys.argv[1], '.git-dropbox.cnf'))
     except IndexError:
         pass
