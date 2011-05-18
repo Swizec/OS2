@@ -15,7 +15,7 @@ def commit(root, path, author):
                           author=author,
                           commit_timestamp=int(time()),
                           commit_timezone=parse_timezone('-0200')[0],
-                          author_timestamp=os.path.getctime(path),
+                          author_timestamp=os.path.getctime(os.path.join(root, path)),
                           encoding='UTF-8')
 
 if __name__ == '__main__':
