@@ -34,9 +34,11 @@ def run_listener(path_to_watch,dataz):
         full_filename = os.path.join (path_to_watch, file)
         #what to do when a file is changed
         print "File changed: %s"%full_filename
-        #f = open('.\izpis.txt','w')
-        #f.write('File changed: %s'%full_filename)
-        #f.close()
+        
+        # @ SWIZC
+        #to se laufa ko se spremeni fajl, mas pa dictionary "dataz" z naslednjo vsebino:
+        #{'Username': u'user', 'Password': u'pass', 'Location': u'D:\\Games', 'Repository': u'rep_name'}
+        
         
 if __name__ == '__main__':
     run_listener(".\\test")
