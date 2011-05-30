@@ -2,7 +2,7 @@
 # Programmer : Simon Brunning
 # Notes      : Based on (i.e. ripped off from) Mark Hammond's
 #              win32gui_taskbar.py and win32gui_menu.py demos from PyWin32
-#              - and now ripped off by Rok Ritlop for his school project.
+#              - and now ripped off by Rok Ritlop for academic purposes.
 
 import os
 import sys
