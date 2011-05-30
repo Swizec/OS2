@@ -1,14 +1,9 @@
-#!/usr/bin/env python
-# Module     : SysTrayIcon.py
 # Synopsis   : Windows System tray icon.
-# Programmer : Simon Brunning - simon@brunningonline.net
-# Date       : 11 April 2005
+# Programmer : Simon Brunning
 # Notes      : Based on (i.e. ripped off from) Mark Hammond's
 #              win32gui_taskbar.py and win32gui_menu.py demos from PyWin32
-'''TODO
+#              - and now ripped off by Rok Ritlop for his school project.
 
-For now, the demo at the bottom shows how to use it...'''
-         
 import os
 import sys
 import wx
@@ -21,7 +16,7 @@ except ImportError:
     import win32gui
 
 class SysTrayIcon(object):
-    '''TODO'''
+    
     QUIT = 'QUIT'
     SPECIAL_ACTIONS = [QUIT]
     
