@@ -3,6 +3,8 @@ import os, sys, ConfigParser
 
 from dulwich import client
 from dulwich.repo import Repo
+from dulwich.diff_tree import tree_changes
+from dulwich.objects import Tree
 
 def fetch(root):
     repo = Repo(root)
@@ -12,9 +14,17 @@ def fetch(root):
     def progress(arg):
         print ".", arg
 
-    print remote
+    remotes = remote.fetch(path, repo, progress=progress)
+    #print remote.fetch_pack(path, progress=progress)
 
-    remote.fetch(path, repo, progress=progress)
+    print remotes
+
+    local_tree = repo.open_index().commit(repo.object_store)
+    remote_tree = repo.commit(remotes['HEAD']).tree
+    #print Tree(remotes['refs/heads/master'])
+
+    for change in tree_changes(repo.object_store, local_tree, remote_tree):
+        print change
 
 if __name__ == '__main__':
     remote = client.get_transport_and_path('git@github.com:Swizec/OS2.git')
