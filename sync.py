@@ -26,9 +26,9 @@ def fetch(root):
     #for change in tree_changes(repo.object_store, local_tree, remote_tree):
     #    print change
 
-    repo.do_commit("a merge",
-                   committer="Git-dropbox",
-                   tree=remote_tree)
+    #repo.do_commit("a merge",
+    #               committer="Git-dropbox",
+    #               tree=remote_tree)
 
 if __name__ == '__main__':
     remote = client.get_transport_and_path('git@github.com:Swizec/OS2.git')
